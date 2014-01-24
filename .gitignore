@@ -1,0 +1,8 @@
+build/*
+!build/.gitkeep
+node_modules
+.npm-debug.log
+tmp
+
+# Project files
+*.sublime-workspace
