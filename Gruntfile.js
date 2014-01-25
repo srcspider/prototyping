@@ -35,6 +35,7 @@ module.exports = function (grunt) {
 
     // check javascript for nonsense
     jshint: {
+      // see: http://www.jshint.com/docs/options/
       options: {
         curly: true,    // always write quirly braces
         eqeqeq: true,   // warnings on using ==
