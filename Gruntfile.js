@@ -7,17 +7,6 @@ module.exports = function (grunt) {
     // access to package.json values
     pkg: grunt.file.readJSON('package.json'),
 
-
-    // jsxc: {
-    //   devel: {
-    //     src: 'sources/jsx/**/*.js',
-    //     output_rule: {
-    //       regexp: /sources\/jsx\/(.*).js/,
-    //       replace: 'build/jsx/$1.js',
-    //     }
-    //   }
-    // },
-
     // compile jsx to javascript
     react: {
       dynamic_mappings: {
