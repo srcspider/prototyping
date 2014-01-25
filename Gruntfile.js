@@ -7,21 +7,45 @@ module.exports = function (grunt) {
     // access to package.json values
     pkg: grunt.file.readJSON('package.json'),
 
+
+    // jsxc: {
+    //   devel: {
+    //     src: 'sources/jsx/**/*.js',
+    //     output_rule: {
+    //       regexp: /sources\/jsx\/(.*).js/,
+    //       replace: 'build/jsx/$1.js',
+    //     }
+    //   }
+    // },
+
     // compile jsx to javascript
-    jsx: {
-      devel: {
-        src: 'sources/jsx/**/*.js',
-        dest: 'build/jsx/'
-        output_rule: {
-          regexp: /fixtures\/(.*).jsx/,
-          replace: 'tmp\/$1.js',
-        }
+    react: {
+      dynamic_mappings: {
+        files: [
+          {
+            expand: true,
+            cwd: 'sources/jsx',
+            src: [ '**/*.js' ],
+            dest: 'build/jsx',
+            ext: '.js'
+          }
+        ]
       }
     },
 
     // check javascript for nonsense
     jshint: {
-      all: ['build/js/**/*.js']
+      options: {
+        curly: true,    // always write quirly braces
+        eqeqeq: true,   // warnings on using ==
+        eqnull: true,   // supress eqeqeq warnings when doing "var == null"
+        browser: true,  // assume browser
+        evil: true,     // supress use of eval warnings
+        globals: {
+          jQuery: true  // assume jquery
+        },
+      },
+      all: [ 'build/jsx/**/*.js' ]
     },
 
     // minify javascript
@@ -46,9 +70,9 @@ module.exports = function (grunt) {
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-jsx');
+  grunt.loadNpmTasks('grunt-react');
 
   // default
-  grunt.registerTask('default', ['jsx', 'jshint', 'uglify']);
+  grunt.registerTask('default', ['react', 'jshint', 'uglify']);
 
 };

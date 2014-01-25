@@ -1,0 +1,9 @@
+$test: 1;
+.test {
+	.test {
+		color: $test;
+		#test {
+			color: red;
+		}
+	}
+}

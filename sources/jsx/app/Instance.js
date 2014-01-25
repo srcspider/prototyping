@@ -3,12 +3,12 @@ app.Instance = Class.extend({
 
 //// Event Handling ////////////////////////////////////////////////////////////
 
+  _events: {},
+
   on: function (triggerName, callback) {
     var namespace = null;
 
-    this._events || (this._events = {});
-
-    if (triggerName.indexOf('.') != -1) {
+    if (triggerName.indexOf('.') !== -1) {
       var parts = triggerName.split('.');
       triggerName = parts[0];
       namespace = parts[1];
@@ -34,9 +34,7 @@ app.Instance = Class.extend({
   off: function (triggerName) {
     var namespace = null;
 
-    this._events || (this._events = {});
-
-    if (triggerName.indexOf('.') != -1) {
+    if (triggerName.indexOf('.') !== -1) {
       var parts = triggerName.split('.');
       triggerName = parts[0];
       namespace = parts[1];
@@ -59,15 +57,13 @@ app.Instance = Class.extend({
     var self = this;
     var args = [].slice.call(arguments, 1);
 
-    this._events || (this._events = {});
-
     if (this._events[triggerName] != null) {
       var event_runner = function (controller) {
         if (controller != null) {
           console.log(controller);
           controller.apply(self, args);
         }
-      }
+      };
       _.each(this._events[triggerName].unnamed, event_runner);
       _.each(this._events[triggerName].named, event_runner);
     }

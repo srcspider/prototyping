@@ -2,7 +2,7 @@
 var Page = React.createClass({
 
   render: function () {
-    return <div>{this.props.message}</div>
+    return <div>{this.props.message}</div>;
   },
 
 });
