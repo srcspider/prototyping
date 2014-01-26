@@ -164,7 +164,7 @@ module.exports = function (grunt) {
     },
 
     replace: {
-      sourcemaps: {
+      sourcemapsfix: {
         src: ['build/public/**/*.map'],
         overwrite: true, // overwrite matched source files
         replacements: [
@@ -234,7 +234,7 @@ module.exports = function (grunt) {
       'autoprefixer',
       'copy:misc',
       'concat:vendorcss',
-      'replace:sourcemaps'
+      'replace:sourcemapsfix'
     ]
   );
 
