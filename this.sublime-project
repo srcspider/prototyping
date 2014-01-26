@@ -2,17 +2,36 @@
   "folders": [
     {
       "name": "Project Files",
-      "path": "sources"
+      "path": "sources",
+      "folder_exclude_patterns": [ "lib" ]
+    },
+    {
+      "name": "Library",
+      "path": "sources/lib"
     },
     {
       "name": "Configuration",
       "path": ".",
-      "file_exclude_patterns": [ "*.sublime*", ".git*" ],
-      "folder_exclude_patterns": [ "build", "sources", "node_modules" ]
+      "file_exclude_patterns": [ "*.sublime*" ],
+      "folder_exclude_patterns": [
+        "build",
+        "sources",
+        "releases",
+        "node_modules",
+        ".sass-cache"
+      ]
     },
     {
       "name": "Build",
       "path": "build"
+    },
+    {
+      "name": "Releases",
+      "path": "releases"
+    },
+    {
+      "name": "Node Modules",
+      "path": "node_modules"
     }
   ],
   "settings": {

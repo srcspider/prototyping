@@ -1,8 +1,10 @@
 build/*
+releases/*
 !build/.gitkeep
 node_modules
 .npm-debug.log
-tmp
+build/tmp
 
-# Project files
+# junk
 *.sublime-workspace
+.sass-cache
