@@ -1,3 +1,5 @@
-.test { color: red; }
+@import "variables";
 
-this-text-forces-error-status-code
+.test {
+	display: flex;
+}

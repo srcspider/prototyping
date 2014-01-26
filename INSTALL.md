@@ -33,12 +33,20 @@ grunt
 ```
 
 Or alternatively use the "Grunt" build system in sublime
-(see: Tools / Build Systems) via F7
+(see: `Tools / Build Systems`) via F7
 
 
 ## Tips / Troubleshooting
+
+### Annoying beep
 
 If you're on windows running `grunt` and getting an error may result in an
 annoying beep. To stop it either in a console with admin privilages run:
 `net stop beep` or follow the following instructions:
 https://superuser.com/questions/10575/turning-off-the-cmd-window-beep-sound
+
+### Problems building style
+
+If you encounter problems with the `--sourcemap` flag in the sass, make sure
+you have 3.3.0 or greater, at the time of this writing sass 3.3.0 is still in
+rc status so you need to run `gem install sass -v '>=3.3.0alpha' --pre`

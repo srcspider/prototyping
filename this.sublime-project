@@ -1,16 +1,12 @@
 {
   "folders": [
     {
-      "name": "Project Files",
+      "name": "project files",
       "path": "sources",
       "folder_exclude_patterns": [ "lib" ]
     },
     {
-      "name": "Library",
-      "path": "sources/lib"
-    },
-    {
-      "name": "Configuration",
+      "name": "configuration",
       "path": ".",
       "file_exclude_patterns": [ "*.sublime*" ],
       "folder_exclude_patterns": [
@@ -22,15 +18,17 @@
       ]
     },
     {
-      "name": "Build",
+      "name": "vendor",
+      "path": "sources/lib"
+    },
+    {
       "path": "build"
     },
     {
-      "name": "Releases",
       "path": "releases"
     },
     {
-      "name": "Node Modules",
+      "name": "grunt plugins",
       "path": "node_modules"
     }
   ],

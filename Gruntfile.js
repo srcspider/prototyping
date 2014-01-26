@@ -24,7 +24,7 @@ module.exports = function (grunt) {
             expand: true,
             cwd: 'sources/jsx',
             src: [ '**/*.js' ],
-            dest: 'build/tmp/jsx',
+            dest: 'build/public/js/jsx',
             ext: '.js'
           }
         ]
@@ -44,44 +44,26 @@ module.exports = function (grunt) {
           jQuery: true  // assume jquery
         }
       },
-      all: [ 'build/tmp/jsx/**/*.js' ]
+      all: [ 'build/public/js/jsx/**/*.js' ]
     },
 
     // minify javascript
     uglify: {
       options: {
-        banner: '/*! '+build_info+' */\n'
+        banner: '/*! '+build_info+' */\n',
+        sourceMap: true
       },
       all: {
         src: [
-          'sources/lib/**/*.js',
-          'build/tmp/jsx/components/**/*.js',
-          'build/tmp/jsx/app/**/*.js',
-          'build/tmp/jsx/*.js'
+          'build/public/js/lib/**/*.js',
+          'build/public/js/jsx/**/*.js',
         ],
-        dest: 'build/public/scripts.min.js'
+        dest: 'build/public/js/scripts.js'
       }
     },
 
     // Styles
     // ------
-
-    sass: {
-      all: {
-        options: {
-          style: 'expanded'
-        },
-        files: [
-          {
-            expand: true,
-            cwd: 'sources/scss',
-            src: [ '**/*.scss' ],
-            dest: 'build/tmp/scss/',
-            ext: '.css'
-          }
-        ]
-      }
-    },
 
     autoprefixer: {
       options: {
@@ -91,9 +73,9 @@ module.exports = function (grunt) {
       },
       all: {
         expand: true,
-        cwd: 'build/tmp',
-        src: 'scss/**/*.css',
-        dest: '../prefixed.scss/'
+        cwd: 'build/public/css',
+        src: '**/*.css',
+        dest: 'build/public/css/'
       }
     },
 
@@ -101,7 +83,7 @@ module.exports = function (grunt) {
     // ----------
 
     copy: {
-      all: {
+      misc: {
         files: [
           {
             src: 'sources/index.html',
@@ -115,6 +97,27 @@ module.exports = function (grunt) {
           }
         ]
       },
+      sass: {
+        files: [
+          {
+            expand: true,
+            flatten: true,
+            cwd: 'sources/scss/',
+            src: '**/*',
+            dest: 'build/public/css/scss/'
+          }
+        ]
+      },
+      scripts: {
+        files: [
+          {
+            expand: true,
+            cwd: 'sources/lib/',
+            src: '**/*.js',
+            dest: 'build/public/js/lib/'
+          }
+        ]
+      }
     },
 
     // Utilities
@@ -129,7 +132,7 @@ module.exports = function (grunt) {
 
     exec: {
       sass: {
-        command: 'sass --update sources/scss/:build/tmp/scss/ --load-path sources/scss --style expanded',
+        command: 'sass --sourcemap --update build/public/css/scss/:build/public/css/ --load-path sources/scss --style expanded',
         stdout: true,
         stderr: true
       }
@@ -154,9 +157,22 @@ module.exports = function (grunt) {
     },
 
     concat: {
-      all: {
-        src: [ 'sources/lib/**/*.css', 'build/tmp/scss/**/*.css' ],
-        dest: 'build/tmp/unprefixed.styles.min.css'
+      vendorcss: {
+        src: [ 'sources/lib/**/*.css' ],
+        dest: 'build/public/css/vendor.css'
+      }
+    },
+
+    replace: {
+      sourcemaps: {
+        src: ['build/public/**/*.map'],
+        overwrite: true, // overwrite matched source files
+        replacements: [
+          {
+            from: /\\\\/g,
+            to: '/'
+          }
+        ]
       }
     },
 
@@ -178,7 +194,7 @@ module.exports = function (grunt) {
         },
         files: [ 'sources/**/*.scss' ],
         tasks: [
-          'sass'
+          'exec:sass'
         ]
       }
     },
@@ -193,6 +209,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-text-replace');
   grunt.loadNpmTasks('grunt-exec');
 
   // scripts
@@ -201,7 +218,6 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-react');
 
   // styles
-  grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-autoprefixer');
 
   // default task
@@ -210,42 +226,15 @@ module.exports = function (grunt) {
     [
       'clean',
       'react',
+      'copy:scripts',
       'jshint',
       'uglify',
-      'sass',
-      'autoprefixer',
-      'copy',
-      'concat'
-    ]
-  );
-
-  // debug task
-  grunt.registerTask(
-    'exec-test',
-    [
-      'clean',
-      'react',
-      'jshint',
-      'uglify',
+      'copy:sass',
       'exec:sass',
       'autoprefixer',
-      'copy',
-      'concat'
-    ]
-  );
-
-  // debug task
-  grunt.registerTask(
-    'sass-test',
-    [
-      'clean',
-      'react',
-      'jshint',
-      'uglify',
-      'sass',
-      'autoprefixer',
-      'copy',
-      'concat'
+      'copy:misc',
+      'concat:vendorcss',
+      'replace:sourcemaps'
     ]
   );
 
