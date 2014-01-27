@@ -132,7 +132,7 @@ module.exports = function (grunt) {
 
     exec: {
       sass: {
-        command: 'sass --sourcemap --update build/public/css/scss/:build/public/css/ --load-path sources/scss --style expanded',
+        command: 'sass --sourcemap --update build/public/css/scss/:build/public/css/ --load-path sources/scss --style expanded -E utf-8',
         stdout: true,
         stderr: true
       }
