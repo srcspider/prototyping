@@ -70,6 +70,26 @@ module.exports = function (grunt) {
 
     // see: exec:sass
 
+    imagemin: {
+      options: {
+        optimizationLevel: 3
+      },
+      project: {
+        files: [{
+          expand: true,
+          cwd: 'sources/images',
+          src: [ '**/*.{png,jpg,jpeg,gif}' ],
+          dest: 'build/public/images'
+        }]
+      },
+      watchedfile: {
+        expand: true,
+        cwd: 'sources/images',
+        src: 'modified/file',
+        dest: 'build/public/images'
+      }
+    },
+
     autoprefixer: {
       project: {
         options: {
@@ -215,10 +235,17 @@ module.exports = function (grunt) {
       misc: {
         options: {
           spawn: false,
-          livereload: true,
+          livereload: true
         },
         files: [ 'sources/*.html' ],
         tasks: [ 'copy:misc' ]
+      },
+      images: {
+        options: {
+          spawn: false
+        },
+        files: [ 'sources/images/**/*.{png,jpg,jpeg,gif}' ],
+        tasks: [ 'imagemin:watchedfile' ]
       },
       styles: {
         options: {
@@ -262,7 +289,10 @@ module.exports = function (grunt) {
       grunt.config('react.watchedfile.src', relative_filepath);
       grunt.config('jshint.watchedfile', 'build/public/js/jsx/' + relative_filepath);
     }
-    // grunt.config('jshint.all.src', filepath);
+    else if (target == 'images') {
+      var relative_filepath = filepath.replace('sources/images/', '');
+      grunt.config('imagemin.watchedfile.src', relative_filepath);
+    }
   });
 
 //// Task Definitions //////////////////////////////////////////////////////////
@@ -282,6 +312,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-react');
 
   // styles
+  grunt.loadNpmTasks('grunt-contrib-imagemin');
   grunt.loadNpmTasks('grunt-autoprefixer');
 
   // default task
@@ -301,7 +332,8 @@ module.exports = function (grunt) {
       'autoprefixer',
       'copy:misc',
       'concat:vendorcss',
-      'replace:cssmapsfix'
+      'replace:cssmapsfix',
+      'imagemin:project'
     ]
   );
 
