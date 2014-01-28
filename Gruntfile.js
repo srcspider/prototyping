@@ -2,32 +2,34 @@ module.exports = function (grunt) {
 
 //// Grunt Configuration ///////////////////////////////////////////////////////
 
-  var build_info = '<%= pkg.name %>'
-    + ' v<%= pkg.version %>'
-    + ', build: <%= grunt.template.today("yyyy-mm-dd") %>';
-
-  var build_name = '<%= pkg.name %>-v<%= pkg.version %>';
-
   grunt.initConfig({
 
     // access to package.json values
     pkg: grunt.file.readJSON('package.json'),
+    builddate: '<%= grunt.template.today("yyyy-mm-dd") %>',
+    buildname: '<%= pkg.name %>-<%= pkg.version %>',
+    buildbanner: '<%= buildname %>, build: <%= builddate %>',
 
     // Scripts
     // -------
 
     // compile jsx to javascript
     react: {
-      all: {
-        files: [
-          {
-            expand: true,
-            cwd: 'sources/jsx',
-            src: [ '**/*.js' ],
-            dest: 'build/public/js/jsx',
-            ext: '.js'
-          }
-        ]
+      project: {
+        files: [{
+          expand: true,
+          cwd: 'sources/jsx',
+          src: [ '**/*.js' ],
+          dest: 'build/public/js/jsx',
+          ext: '.js'
+        }]
+      },
+      watchedfile: {
+        expand: true,
+        cwd: 'sources/jsx',
+        src: 'modified/file.js',
+        dest: 'build/public/js/jsx',
+        ext: '.js'
       }
     },
 
@@ -44,16 +46,17 @@ module.exports = function (grunt) {
           jQuery: true  // assume jquery
         }
       },
-      all: [ 'build/public/js/jsx/**/*.js' ]
+      project: [ 'build/public/js/jsx/**/*.js' ],
+      watchedfile: 'modified/file.js',
     },
 
     // minify javascript
     uglify: {
       options: {
-        banner: '/*! '+build_info+' */\n',
+        banner: '/*! <%= buildbanner */\n',
         sourceMap: true
       },
-      all: {
+      project: {
         src: [
           'build/public/js/lib/**/*.js',
           'build/public/js/jsx/**/*.js',
@@ -65,17 +68,21 @@ module.exports = function (grunt) {
     // Styles
     // ------
 
+    // see: exec:sass
+
     autoprefixer: {
-      options: {
-        browsers: ['last 2 version', 'ie 8', 'ie 9'],
-        map: true,
-        diff: true
-      },
-      all: {
-        expand: true,
-        cwd: 'build/public/css',
-        src: '**/*.css',
-        dest: 'build/public/css/'
+      project: {
+        options: {
+          browsers: ['last 2 version', 'ie 8', 'ie 9'],
+          map: true,
+          diff: true
+        },
+        files: [{
+          expand: true,
+          cwd: 'build/public/css',
+          src: '**/*.css',
+          dest: 'build/public/css/'
+        }]
       }
     },
 
@@ -86,8 +93,10 @@ module.exports = function (grunt) {
       misc: {
         files: [
           {
-            src: 'sources/index.html',
-            dest: 'build/public/index.html'
+            expand: true,
+            cwd: 'sources',
+            src: '*.html',
+            dest: 'build/public/'
           },
           {
             expand: true,
@@ -103,10 +112,17 @@ module.exports = function (grunt) {
             expand: true,
             flatten: true,
             cwd: 'sources/scss/',
-            src: '**/*',
+            src: '**/*.scss',
             dest: 'build/public/css/scss/'
           }
         ]
+      },
+      sass_watchedfile: {
+        expand: true,
+        flatten: true,
+        cwd: 'sources/scss/',
+        src: 'modified/file.scss',
+        dest: 'build/public/css/scss/'
       },
       scripts: {
         files: [
@@ -124,7 +140,7 @@ module.exports = function (grunt) {
     // ---------
 
     clean: {
-      all: [
+      project: [
         'build/tmp',
         'build/public'
       ]
@@ -132,7 +148,14 @@ module.exports = function (grunt) {
 
     exec: {
       sass: {
-        command: 'sass --sourcemap --update build/public/css/scss/:build/public/css/ --load-path sources/scss --style expanded -E utf-8',
+        command: [
+          'sass',
+          '--sourcemap',
+          '--update build/public/css/scss/:build/public/css/',
+          '--load-path sources/scss',
+          '--style expanded',
+          '-E utf-8'
+        ].join(' '),
         stdout: true,
         stderr: true
       }
@@ -143,7 +166,7 @@ module.exports = function (grunt) {
         options: {
           mode: 'zip',
           pretty: true,
-          archive: 'releases/' + build_name + '.zip'
+          archive: 'releases/<%= buildname %>.zip'
         },
         files: [
           {
@@ -164,8 +187,18 @@ module.exports = function (grunt) {
     },
 
     replace: {
-      sourcemapsfix: {
-        src: ['build/public/**/*.map'],
+      cssmapsfix: {
+        src: ['build/public/css/**/*.map'],
+        overwrite: true, // overwrite matched source files
+        replacements: [
+          {
+            from: /\\\\/g,
+            to: '/'
+          }
+        ]
+      },
+      jsmapsfix: {
+        src: ['build/public/js/**/*.map'],
         overwrite: true, // overwrite matched source files
         replacements: [
           {
@@ -176,29 +209,58 @@ module.exports = function (grunt) {
       }
     },
 
+    // running `grunt watch` will have grunt run all of the following
+    // definitions simultaniously in the same console window :)
     watch: {
-      scripts: {
+      misc: {
         options: {
           spawn: false,
         },
-        files: [ 'sources/**/*.js' ],
-        tasks: [
-          'react',
-          'jshint',
-          'uglify'
-        ]
+        files: [ 'sources/*.html' ],
+        tasks: [ 'copy:misc' ]
       },
       styles: {
         options: {
           spawn: false,
         },
-        files: [ 'sources/**/*.scss' ],
+        files: [ 'sources/scss/**/*.scss' ],
         tasks: [
-          'exec:sass'
+          'copy:sass_watchedfile',
+          'exec:sass',
+          'autoprefixer:project',
+          'replace:cssmapsfix'
+        ]
+      },
+      scripts: {
+        options: {
+          spawn: false,
+        },
+        files: [ 'sources/jsx/**/*.js' ],
+        tasks: [
+          'react:watchedfile',
+          'jshint:watchedfile',
+          'uglify:project',
+          'replace:jsmapsfix'
         ]
       }
     },
 
+  });
+
+//// Filtering Watch Tasks /////////////////////////////////////////////////////
+
+  grunt.event.on('watch', function(action, filepath, target) {
+    filepath = filepath.replace(/\\/g, '/');
+    if (target == 'styles') {
+      var relative_filepath = filepath.replace('sources/scss/', '');
+      grunt.config('copy.sass_watchedfile.src', relative_filepath);
+    }
+    else if (target == 'scripts') {
+      var relative_filepath = filepath.replace('sources/jsx/', '');
+      grunt.config('react.watchedfile.src', relative_filepath);
+      grunt.config('jshint.watchedfile', 'build/public/js/jsx/' + relative_filepath);
+    }
+    // grunt.config('jshint.all.src', filepath);
   });
 
 //// Task Definitions //////////////////////////////////////////////////////////
@@ -224,17 +286,20 @@ module.exports = function (grunt) {
   grunt.registerTask(
     'default',
     [
-      'clean',
-      'react',
+      'clean:project',
+      // scripts tasks
+      'react:project',
       'copy:scripts',
-      'jshint',
-      'uglify',
+      'jshint:project',
+      'uglify:project',
+      'replace:jsmapsfix',
+      // style tasks
       'copy:sass',
       'exec:sass',
       'autoprefixer',
       'copy:misc',
       'concat:vendorcss',
-      'replace:sourcemapsfix'
+      'replace:cssmapsfix'
     ]
   );
 
@@ -243,7 +308,7 @@ module.exports = function (grunt) {
     'release',
     [
       'default',
-      'compress'
+      'compress:release'
     ]
   );
 
