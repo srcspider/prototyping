@@ -1,3 +1,5 @@
+![dependency status](https://david-dm.org/srcspider/grunt-template.png)
+
 See [INSTALL.md](INSTALL.md) for installation instructions.
 
 Grunt project template with:
