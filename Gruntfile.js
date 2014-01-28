@@ -53,7 +53,7 @@ module.exports = function (grunt) {
     // minify javascript
     uglify: {
       options: {
-        banner: '/*! <%= buildbanner */\n',
+        banner: '/*! <%= buildbanner %> */\n',
         sourceMap: true
       },
       project: {
@@ -215,6 +215,7 @@ module.exports = function (grunt) {
       misc: {
         options: {
           spawn: false,
+          livereload: true,
         },
         files: [ 'sources/*.html' ],
         tasks: [ 'copy:misc' ]
@@ -222,6 +223,7 @@ module.exports = function (grunt) {
       styles: {
         options: {
           spawn: false,
+          livereload: true,
         },
         files: [ 'sources/scss/**/*.scss' ],
         tasks: [
