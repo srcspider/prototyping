@@ -8,13 +8,15 @@
 		{
 			"name": "configuration",
 			"path": ".",
-			"file_exclude_patterns": [ "*.sublime*" ],
+			"file_exclude_patterns": [ "*.sublime*", "Gemfile.lock" ],
 			"folder_exclude_patterns": [
 				"build",
 				"sources",
 				"releases",
 				"node_modules",
-				".sass-cache"
+				".sass-cache",
+				".bundle",
+				"bin"
 			]
 		},
 		{

@@ -169,7 +169,7 @@ module.exports = function (grunt) {
 		exec: {
 			sass: {
 				command: [
-					'sass',
+					'bundle exec sass',
 					'--sourcemap',
 					'--update build/public/css/scss/:build/public/css/',
 					'--load-path sources/scss',

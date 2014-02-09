@@ -1,3 +1,5 @@
+.bundle/*
+bin/*
 build/*
 releases/*
 !build/.gitkeep
@@ -8,3 +10,4 @@ build/tmp
 # junk
 *.sublime-workspace
 .sass-cache
+Gemfile.lock

@@ -2,11 +2,22 @@ You'll need node (along with npm which comes with node).
 
 http://nodejs.org/
 
+**getting project files**
 ```sh
 cd /path/to/projects
 git clone git@github.com:srcspider/grunt-template.git
 cd grunt-template
+```
+
+**getting grunt dependencies**
+```
 npm install
+```
+
+**getting ruby dependencies**
+```
+gem install bundler
+bundle install
 ```
 
 You now have all the dependencies sorted and the project is now up and ready.
@@ -17,7 +28,8 @@ To open the project in sublime please use:
 edit this.sublime-project
 ```
 
-Where `edit` is your command line alias/link for sublime's executable.
+Where `edit` is your command line alias/link for sublime's executable (2.x
+and 3.x have been tested and known to work).
 
 This will open the project with files sorted, irrelevant files hidden and
 various other goodies such as project tab settings, build systems, ruler
