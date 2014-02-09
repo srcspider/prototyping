@@ -1,48 +1,48 @@
 {
-  "folders": [
-    {
-      "name": "project files",
-      "path": "sources",
-      "folder_exclude_patterns": [ "lib" ]
-    },
-    {
-      "name": "configuration",
-      "path": ".",
-      "file_exclude_patterns": [ "*.sublime*" ],
-      "folder_exclude_patterns": [
-        "build",
-        "sources",
-        "releases",
-        "node_modules",
-        ".sass-cache"
-      ]
-    },
-    {
-      "name": "vendor",
-      "path": "sources/lib"
-    },
-    {
-      "path": "build"
-    },
-    {
-      "path": "releases"
-    },
-    {
-      "name": "grunt plugins",
-      "path": "node_modules"
-    }
-  ],
-  "settings": {
-    "rulers": [ 80 ],
-    "tab_size": 2,
-    "trim_trailing_white_space_on_save": true,
-    "use_tab_stops": false
-  },
-  "build_systems": [
-    {
-      "name": "Grunt",
-      "cmd": ["grunt"],
-      "working_dir": "${project_path}"
-    }
-  ]
+	"folders": [
+		{
+			"name": "project files",
+			"path": "sources",
+			"folder_exclude_patterns": [ "lib" ]
+		},
+		{
+			"name": "configuration",
+			"path": ".",
+			"file_exclude_patterns": [ "*.sublime*" ],
+			"folder_exclude_patterns": [
+				"build",
+				"sources",
+				"releases",
+				"node_modules",
+				".sass-cache"
+			]
+		},
+		{
+			"name": "vendor",
+			"path": "sources/lib"
+		},
+		{
+			"path": "build"
+		},
+		{
+			"path": "releases"
+		},
+		{
+			"name": "grunt plugins",
+			"path": "node_modules"
+		}
+	],
+	"settings": {
+		"rulers": [ 80 ],
+		"tab_size": 4,
+		"trim_trailing_white_space_on_save": true,
+		"use_tab_stops": true
+	},
+	"build_systems": [
+		{
+			"name": "Grunt",
+			"cmd": ["grunt"],
+			"working_dir": "${project_path}"
+		}
+	]
 }

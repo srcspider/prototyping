@@ -5,6 +5,6 @@
 
 var domMain = document.getElementById('app-main');
 React.renderComponent(
-  <Page message="hello, world"/>,
-  domMain
+	<Page message="hello, world"/>,
+	domMain
 );
