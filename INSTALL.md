@@ -1,6 +1,13 @@
-You'll need node (along with npm which comes with node).
+You'll need nodejs (`npm` utility comes with nodejs).
 
 http://nodejs.org/
+
+You'll also need ruby (`gem` utility comes with `ruby`)
+
+https://www.ruby-lang.org/
+
+And finally optionally you'll need [sublime text](http://www.sublimetext.com/)
+along with the [EditorConfig plugin](https://github.com/sindresorhus/editorconfig-sublime#readme).
 
 **getting project files**
 ```sh
@@ -10,12 +17,12 @@ cd grunt-template
 ```
 
 **getting grunt dependencies**
-```
+```sh
 npm install
 ```
 
 **getting ruby dependencies**
-```
+```sh
 gem install bundler
 bundle install
 ```
@@ -36,6 +43,8 @@ various other goodies such as project tab settings, build systems, ruler
 settings, etc; it will also mean sublime text will persist unsaved files when
 you close/switch projects or the editor itself.
 
+For more on workflow see: https://gist.github.com/srcspider/8618334
+
 The project is designed to be worked on and best viewed in sublime text but you
 may use any editor you wish.
 
@@ -45,7 +54,7 @@ grunt
 ```
 
 Or alternatively use the "Grunt" build system in sublime
-(see: `Tools / Build Systems`) via F7
+(see: `Tools / Build Systems`) via `F7`
 
 
 ## Tips / Troubleshooting
