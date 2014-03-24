@@ -1,13 +1,9 @@
-You'll need nodejs (`npm` utility comes with nodejs).
+You'll need nodejs: http://nodejs.org/
 
-http://nodejs.org/
+You'll also need ruby: https://www.ruby-lang.org/
 
-You'll also need ruby (`gem` utility comes with `ruby`)
-
-https://www.ruby-lang.org/
-
-And finally optionally you'll need [sublime text](http://www.sublimetext.com/)
-along with the [EditorConfig plugin](https://github.com/sindresorhus/editorconfig-sublime#readme).
+Optionally you'll need [sublime text](http://www.sublimetext.com/)
+along with the [EditorConfig plugin](https://github.com/sindresorhus/editorconfig-sublime#readme). If you're not familiar with sublime text here is a quick cheat sheet: https://gist.github.com/srcspider/8618334
 
 **getting project files**
 ```sh
@@ -43,8 +39,6 @@ various other goodies such as project tab settings, build systems, ruler
 settings, etc; it will also mean sublime text will persist unsaved files when
 you close/switch projects or the editor itself.
 
-For more on workflow see: https://gist.github.com/srcspider/8618334
-
 The project is designed to be worked on and best viewed in sublime text but you
 may use any editor you wish.
 
@@ -53,9 +47,20 @@ To run the build system,
 grunt
 ```
 
-Or alternatively use the "Grunt" build system in sublime
-(see: `Tools / Build Systems`) via `F7`
+To have the build system watch for file changes and also autoupdate,
+```sh
+grunt watch
+```
 
+To have the build system do everything above and also start a server,
+```sh
+grunt server
+```
+
+To have the build system create a release version,
+```sh
+grunt release
+```
 
 ## Tips / Troubleshooting
 
