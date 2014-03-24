@@ -6,6 +6,7 @@ Grunt project template with:
  - underscore (1.5)
  - reactjs (0.8)
  - fontawesome (4.x)
+ - optional nodejs express server
 
 Also contains minimal version of twitter bootstrap (3.x); only grid, forms,
 fonts settings, reset and some of the other basic utilities are included.
