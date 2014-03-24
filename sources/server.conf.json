@@ -1,0 +1,7 @@
+{
+	"name": "untitled site",
+	"public": "../public/",
+	"keys": {
+		"api": "do-not-use-these-keys-in-production"
+	}
+}

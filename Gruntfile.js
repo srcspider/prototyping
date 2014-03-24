@@ -1,5 +1,7 @@
 module.exports = function (grunt) {
 
+	var path = require('path');
+
 //// Grunt Configuration ///////////////////////////////////////////////////////
 
 	grunt.initConfig({
@@ -9,6 +11,18 @@ module.exports = function (grunt) {
 		builddate: '<%= grunt.template.today("yyyy-mm-dd") %>',
 		buildname: '<%= pkg.name %>-<%= pkg.version %>',
 		buildbanner: '<%= buildname %>, build: <%= builddate %>',
+
+		// Servers
+		// -------
+
+		express: {
+			project: {
+				options: {
+					port: 3000,
+					script: 'build/server/<%= pkg.version %>/server.js'
+				}
+			}
+		},
 
 		// Scripts
 		// -------
@@ -110,6 +124,28 @@ module.exports = function (grunt) {
 		// ----------
 
 		copy: {
+
+			// server related
+
+			server: {
+				expand: true,
+				cwd: 'sources/server/',
+				src: '**/*',
+				dest: 'build/server/<%= pkg.version %>/'
+			},
+
+			packageinfo: {
+				src: 'package.json',
+				dest: 'build/server/<%= pkg.version %>/package.json'
+			},
+
+			serverconf: {
+				src: 'sources/server.conf.json',
+				dest: 'build/server/server.conf.json'
+			},
+
+			// public files
+
 			misc: {
 				files: [
 					{
@@ -162,7 +198,15 @@ module.exports = function (grunt) {
 		clean: {
 			project: [
 				'build/tmp',
-				'build/public'
+				'build/public',
+				'build/server'
+			],
+			release: [
+				'build/public/css/scss',
+				'build/public/css/**/*.map',
+				'build/public/css/**/*.patch',
+				'build/public/js/jsx',
+				'build/public/js/**/*.map'
 			]
 		},
 
@@ -207,6 +251,28 @@ module.exports = function (grunt) {
 		},
 
 		replace: {
+			serverfix: {
+				src: 'build/server/server.conf.json',
+				overwrite: true, // overwrite matched source files
+				replacements: [
+					{
+						// ensure draft server.conf.json can't be used as-is
+						from: /do-not-use-these-keys-in-production/g,
+						to: ''
+					}
+				]
+			},
+			removedevdeps: {
+				src: 'build/server/<%= pkg.version %>/package.json',
+				overwrite: true, // overwrite matched source files
+				replacements: [
+					{
+						// ensure draft server.conf.json can't be used as-is
+						from: /\n[\t ]+\"devDependencies\"\: \{[^}]*\},/g,
+						to: ''
+					}
+				]
+			},
 			cssmapsfix: {
 				src: ['build/public/css/**/*.map'],
 				overwrite: true, // overwrite matched source files
@@ -235,7 +301,7 @@ module.exports = function (grunt) {
 			misc: {
 				options: {
 					spawn: false,
-					livereload: true
+					livereload: 8000
 				},
 				files: [ 'sources/*.html' ],
 				tasks: [ 'copy:misc' ]
@@ -250,7 +316,7 @@ module.exports = function (grunt) {
 			styles: {
 				options: {
 					spawn: false,
-					livereload: true,
+					livereload: 8000,
 				},
 				files: [ 'sources/scss/**/*.scss' ],
 				tasks: [
@@ -271,6 +337,21 @@ module.exports = function (grunt) {
 					'uglify:project',
 					'replace:jsmapsfix'
 				]
+			},
+			server: {
+				options: {
+					spawn: false,
+					livereload: 8000
+				},
+				files: [ 'sources/server/**/*' ],
+				tasks: [ 'copy:server' ]
+			},
+			express: {
+				files:  [ 'sources/server/**/*' ],
+				tasks:  [ 'express:project' ],
+				options: {
+					spawn: false
+				}
 			}
 		},
 
@@ -296,6 +377,9 @@ module.exports = function (grunt) {
 	});
 
 //// Task Definitions //////////////////////////////////////////////////////////
+
+	// server
+	grunt.loadNpmTasks('grunt-express-server');
 
 	// utilities
 	grunt.loadNpmTasks('grunt-contrib-clean');
@@ -333,7 +417,10 @@ module.exports = function (grunt) {
 			'copy:misc',
 			'concat:vendorcss',
 			'replace:cssmapsfix',
-			'imagemin:project'
+			'imagemin:project',
+			// server tasks
+			'copy:server',
+			'copy:serverconf'
 		]
 	);
 
@@ -342,7 +429,21 @@ module.exports = function (grunt) {
 		'release',
 		[
 			'default',
+			'clean:release',
+			'replace:serverfix',
+			'copy:packageinfo',
+			'replace:removedevdeps',
 			'compress:release'
+		]
+	);
+
+	// server task
+	grunt.registerTask(
+		'server',
+		[
+			'default',
+			'express:project',
+			'watch'
 		]
 	);
 
