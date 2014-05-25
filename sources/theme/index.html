@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<meta charset="utf-8"/>
+<title><%= server.name %></title>
+<link rel="stylesheet" href="/css/vendor.css"/>
+<link rel="stylesheet" href="/css/master.css"/>
+
+<% if (server.env == 'development') { %>
+<script src="http://localhost:<%= server.livereload %>/livereload.js"></script>
+<% } // endif %>
+
+
+<div class="container">
+
+	<br/>
+
+	<ul class="nav nav-pills">
+		<li><a href="/">Home</a></li>
+		<li><a href="/about">About</a></li>
+	</ul>
+
+	<div id="app-jsx-mountpoint">
+
+		<noscript>
+			<p>This area requires javascript to function.</p>
+			<p>Please enable/whitelist javascript for this site.</p>
+		</noscript>
+
+	</div>
+
+	<hr/>
+
+	<div class="footer" role="footer">
+		<%= server.year %> &mdash; <%= server.name %>
+	</div>
+
+<script>
+	window.server = {
+		name: "<%= server.name %>",
+		api: '/api/1.0',
+	};
+</script>
+
+<script src="/javascript/scripts.js"></script>

@@ -1,13 +1,48 @@
-.bundle/*
-bin/*
-build/*
-releases/*
-!build/.gitkeep
-node_modules
-.npm-debug.log
-build/tmp
 
-# junk
-*.sublime-workspace
+# --- staging area ------------------------------------------------------------
+
+staging/*
+!staging/.keeper
+releases/*
+
+# --- persistance files -------------------------------------------------------
+
+persistence/*
+!persistence/.keeper
+!persistence/db/.keeper
+
+
+######################### Glorious Junk Files #################################
+
+# ---- project ----------------------------------------------------------------
+
+.bundle
 .sass-cache
-Gemfile.lock
+.npm-debug.log
+node_modules
+
+# ---- Operating System -------------------------------------------------------
+
+.DS_Store
+Thumbs.db
+*.vi
+*~
+*.log
+
+# ---- Editors ----------------------------------------------------------------
+
+# sublime text
+*.sublime-workspace
+*.sublime-project
+
+# eclipse
+.settings/
+.project
+.buildpath
+
+# komodo
+*.komodoproject
+.komodotools
+
+# phpstorm
+.idea

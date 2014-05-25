@@ -1,9 +1,11 @@
-You'll need nodejs: http://nodejs.org/
+What you'll need installed:
 
-You'll also need ruby: https://www.ruby-lang.org/
+ - nodejs: http://nodejs.org/
+ - ruby: https://www.ruby-lang.org/
+ - mongodb: http://www.mongodb.org/
 
-Optionally you'll need [sublime text](http://www.sublimetext.com/)
-along with the [EditorConfig plugin](https://github.com/sindresorhus/editorconfig-sublime#readme). If you're not familiar with sublime text here is a quick cheat sheet: https://gist.github.com/srcspider/8618334
+Optionally you'll need [sublime text](http://www.sublimetext.com/) along with the [EditorConfig plugin](https://github.com/sindresorhus/editorconfig-sublime#readme).
+If you're not familiar with sublime text here is a quick cheat sheet: https://gist.github.com/srcspider/8618334
 
 **getting project files**
 ```sh
@@ -12,35 +14,15 @@ git clone git@github.com:srcspider/grunt-template.git
 cd grunt-template
 ```
 
-**getting grunt dependencies**
+## Install
+
 ```sh
-npm install
+./INSTALL.sh
 ```
 
-**getting ruby dependencies**
-```sh
-gem install bundler
-bundle install
-```
+## Post-Install
 
 You now have all the dependencies sorted and the project is now up and ready.
-
-To open the project in sublime please use:
-
-```sh
-edit this.sublime-project
-```
-
-Where `edit` is your command line alias/link for sublime's executable (2.x
-and 3.x have been tested and known to work).
-
-This will open the project with files sorted, irrelevant files hidden and
-various other goodies such as project tab settings, build systems, ruler
-settings, etc; it will also mean sublime text will persist unsaved files when
-you close/switch projects or the editor itself.
-
-The project is designed to be worked on and best viewed in sublime text but you
-may use any editor you wish.
 
 To run the build system,
 ```sh
@@ -52,12 +34,18 @@ To have the build system watch for file changes and also autoupdate,
 grunt watch
 ```
 
-To have the build system do everything above and also start a server,
+To have the build system do everything above and also start servers,
 ```sh
 grunt server
 ```
 
-To have the build system create a release version,
+If you like syncing files to the server just run,
+```sh
+grunt stage
+```
+A clean copy of the files ready for syncing will now be available in `staging/`
+
+To have the build system create a release archive versions,
 ```sh
 grunt release
 ```
@@ -71,8 +59,12 @@ annoying beep. To stop it either in a console with admin privilages run:
 `net stop beep` or follow the following instructions:
 https://superuser.com/questions/10575/turning-off-the-cmd-window-beep-sound
 
-### Problems building style
+### Fast ruby gem installs and updates
 
-If you encounter problems with the `--sourcemap` flag in the sass, make sure
-you have 3.3.0 or greater, at the time of this writing sass 3.3.0 is still in
-rc status so you need to run `gem install sass -v '>=3.3.0alpha' --pre`
+99% of the time it takes to get gems is in generating the docs. If you use only
+online docs then you can just skip this step by adding the following in your
+`~/.gemrc` this will affect both `gem install` as well as `bundle install`
+making them almost instant.
+
+	install: --no-rdoc --no-ri
+	update:  --no-rdoc --no-ri

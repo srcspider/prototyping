@@ -1,17 +1,20 @@
 See [INSTALL.md](INSTALL.md) for installation instructions.
 
-Grunt project template with:
+Grunt project template for prototyping:
 
- - Class.js
- - underscore (1.5)
- - reactjs (0.8)
- - fontawesome (4.x)
- - optional nodejs express server
+ - *Class.js* - javascript classes
+ - *lodash* (2.4.1) - fork of underscore (mostly compatible syntax)
+ - *oboe* (1.14.2) - javascript streaming ajax library
+ - *reactjs* (0.10) - frontend rending library
+ - *page* (1.x) - frontend routing library
+ - *snap.svg* (0.2.0) - frontend svg library
+ - *fontawesome* (4.1) - font icon goodness
+ - *nodejs express server*
 
-Also contains minimal version of twitter bootstrap (3.x); only grid, forms,
-fonts settings, reset and some of the other basic utilities are included.
-Having too much twbs in the project leads to style/design stagnation.
+You also have a complete demo of a _basic forum application_ setup to
+illustrate how how things would be organized (also because copy paste is
+faster for prototyping work).
 
-All packages are included in sources/lib, use of an automated update system for
-the included packages is discouraged. It's much safer to update manually; and
-some may only be updated manually as-is.
+All packages are included in sources/dependencies, use of an automated update
+system for the included packages is discouraged. It's much safer to update
+manually; and some may only be updated manually as-is.

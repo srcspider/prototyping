@@ -1,7 +1,13 @@
 {
-	"name": "untitled site",
-	"public": "../public/",
+	"name": "Example App",
+	"themepath": "/../theme",
+	"db": {
+		"host": "mongodb://localhost/example-db"
+	},
 	"keys": {
 		"api": "do-not-use-these-keys-in-production"
+	},
+	"dev": {
+		"livereload": 8000
 	}
 }

@@ -1,35 +1,80 @@
+var server = {
+	app: null,
+	conf: null,
+	env: 'production',
+	model: {}
+};
+
+//// Module Dependencies ///////////////////////////////////////////////////////
+
 var path = require('path');
 var express = require('express');
-var app = express();
 
-// load server configuration
-var config = require('../server.conf.json');
-if (config.keys.api == '') {
+var app = express();
+server.app = app;
+
+//// Server configuration //////////////////////////////////////////////////////
+
+var conf = require('../server.conf.json');
+
+if (conf.keys.api == '') {
 	console.log('Invalid application keys.');
 	console.log('Terminating due to misconfiguration...');
 	process.exit(1)
 }
 
-// setup static content
-var public_files_path = __dirname + '/../' + config['public'];
-app.use(express.static(public_files_path));
+conf.syspath = __dirname;
+conf.rootpath = path.resolve(__dirname + '/..');
+conf.themepath = path.resolve(conf.rootpath + conf.themepath);
 
-// very basic template information
-var pkg = { name: config.name };
+server.conf = conf;
 
-// example using templating language
-var tplPath = path.resolve(__dirname + '/templates');
+//// Environment ///////////////////////////////////////////////////////////////
 
-app.get('/', function(req, res) {
-	var swig = require('swig');
-	var tpl = swig.compileFile(tplPath + '/base.html');
-	res.send(tpl({ project: pkg }));
-});
+app.set('port', process.env.PORT || 3000);
 
-// getting the server to listen to a port
-var server = app.listen(3000, function() {
-    console.log('Listening on port %d', server.address().port);
+if ('development' == app.get('env')) {
+	server.env = 'development';
+	app.use(express.logger('dev'));
+	app.use(express.errorHandler());
+}
+
+// Middleware
+// ----------
+
+// ensure response uses gzip compression
+// this must be before other middleware
+app.use(express.compress());
+
+// support for application/json
+app.use(express.json());
+// support for x-ww-form-urlencoded
+app.use(express.urlencoded());
+
+/// we intentionally do not use express multipart, which allows for
+/// multipart/form-data requests since we do not need it and it causes a
+/// security vulnerability; the very common express.bodyParser is a combination
+/// of json, urlencoded and multipart; since we explicitly use the middleware
+/// it is not included
+
+app.use(express.methodOverride());
+
+//// Database //////////////////////////////////////////////////////////////////
+
+var dbsetup = require('./db-setup');
+server.db = dbsetup.configure(server);
+
+//// Routes ////////////////////////////////////////////////////////////////////
+
+var routes = require('./routes');
+routes.router(server);
+
+//// Setup Server //////////////////////////////////////////////////////////////
+
+var http = app.listen(app.get('port'), function() {
+    console.log('Listening on port %d', http.address().port);
+    console.log('Handling requests as a', server.env, 'server');
 });
 
 // done.
-module.exports = app;
+module.exports = server;

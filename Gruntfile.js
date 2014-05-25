@@ -19,9 +19,29 @@ module.exports = function (grunt) {
 			project: {
 				options: {
 					port: 3000,
-					script: 'build/server/<%= pkg.version %>/server.js'
+					script: 'staging/server/<%= pkg.version %>/server.js'
 				}
 			}
+		},
+
+		shell: {
+			mongodb: {
+				command: 'mongod --dbpath ./persistence/db',
+				options: {
+					async: true,
+					stdout: true,
+					stderr: true,
+					failOnError: true,
+					execOptions: {
+						cwd: '.'
+					},
+
+				}
+			}
+		},
+
+		wait: {
+			mongodb: { options: { delay: 2500 } }
 		},
 
 		// Scripts
@@ -29,20 +49,23 @@ module.exports = function (grunt) {
 
 		// compile jsx to javascript
 		react: {
+			options: {
+				harmony: false
+			},
 			project: {
 				files: [{
 					expand: true,
-					cwd: 'sources/jsx',
+					cwd: 'sources/javascript',
 					src: [ '**/*.js' ],
-					dest: 'build/public/js/jsx',
+					dest: 'staging/theme/public/javascript/jsx',
 					ext: '.js'
 				}]
 			},
 			watchedfile: {
 				expand: true,
-				cwd: 'sources/jsx',
+				cwd: 'sources/javascript',
 				src: 'modified/file.js',
-				dest: 'build/public/js/jsx',
+				dest: 'staging/theme/public/javascript/jsx',
 				ext: '.js'
 			}
 		},
@@ -56,11 +79,12 @@ module.exports = function (grunt) {
 				eqnull: true,   // supress eqeqeq warnings on "var == null"
 				browser: true,  // assume browser
 				evil: true,     // supress use of eval warnings
+				loopfunc: true, // supress loop function error
 				globals: {
 					jQuery: true  // assume jquery
-				}
+				},
 			},
-			project: [ 'build/public/js/jsx/**/*.js' ],
+			project: [ 'staging/theme/public/javascript/jsx/**/*.js' ],
 			watchedfile: 'modified/file.js',
 		},
 
@@ -68,14 +92,16 @@ module.exports = function (grunt) {
 		uglify: {
 			options: {
 				banner: '/*! <%= buildbanner %> */\n',
-				sourceMap: true
+				sourceMap: true,
+				mangle: false,
+				beautify: true
 			},
 			project: {
 				src: [
-					'build/public/js/lib/**/*.js',
-					'build/public/js/jsx/**/*.js',
+					'staging/theme/public/javascript/lib/**/*.js',
+					'staging/theme/public/javascript/jsx/**/*.js',
 				],
-				dest: 'build/public/js/scripts.js'
+				dest: 'staging/theme/public/javascript/scripts.js'
 			}
 		},
 
@@ -93,14 +119,14 @@ module.exports = function (grunt) {
 					expand: true,
 					cwd: 'sources/images',
 					src: [ '**/*.{png,jpg,jpeg,gif}' ],
-					dest: 'build/public/images'
+					dest: 'staging/theme/public/images'
 				}]
 			},
 			watchedfile: {
 				expand: true,
 				cwd: 'sources/images',
 				src: 'modified/file',
-				dest: 'build/public/images'
+				dest: 'staging/theme/public/images'
 			}
 		},
 
@@ -113,15 +139,22 @@ module.exports = function (grunt) {
 				},
 				files: [{
 					expand: true,
-					cwd: 'build/public/css',
+					cwd: 'staging/theme/public/css',
 					src: '**/*.css',
-					dest: 'build/public/css/'
+					dest: 'staging/theme/public/css/'
 				}]
 			}
 		},
 
 		// Misc Files
 		// ----------
+
+		rename: {
+			server_conf: {
+				src: 'staging/server/server.conf.json',
+				dest: 'staging/server/server.conf.json-draft'
+			}
+		},
 
 		copy: {
 
@@ -131,17 +164,48 @@ module.exports = function (grunt) {
 				expand: true,
 				cwd: 'sources/server/',
 				src: '**/*',
-				dest: 'build/server/<%= pkg.version %>/'
+				dest: 'staging/server/<%= pkg.version %>/'
 			},
 
 			packageinfo: {
 				src: 'package.json',
-				dest: 'build/server/<%= pkg.version %>/package.json'
+				dest: 'staging/server/<%= pkg.version %>/package.json'
 			},
 
 			serverconf: {
 				src: 'sources/server.conf.json',
-				dest: 'build/server/server.conf.json'
+				dest: 'staging/server/server.conf.json'
+			},
+
+			// theme files
+
+			theme: {
+				files: [
+					{
+						expand: true,
+						cwd: 'sources/theme',
+						src: '*.html',
+						dest: 'staging/theme/'
+					},
+					{
+						src: 'sources/theme/theme.js',
+						dest: 'staging/theme/theme.js'
+					}
+				]
+			},
+
+			watchedthemefile: {
+				expand: true,
+				cwd: 'sources/theme/',
+				src: 'modified/file.html',
+				dest: 'staging/theme/'
+			},
+
+			publicfiles: {
+				expand: true,
+				cwd: 'sources/theme/public/',
+				src: '**/*',
+				dest: 'staging/theme/public/'
 			},
 
 			// public files
@@ -152,16 +216,17 @@ module.exports = function (grunt) {
 						expand: true,
 						cwd: 'sources',
 						src: '*.html',
-						dest: 'build/public/'
+						dest: 'staging/theme/public/'
 					},
 					{
 						expand: true,
 						flatten: true,
-						src: 'sources/lib/fontawesome/fonts/**/*',
-						dest: 'build/public/fonts/'
+						src: 'sources/dependencies/fontawesome/fonts/**/*',
+						dest: 'staging/theme/public/fonts/'
 					}
 				]
 			},
+
 			sass: {
 				files: [
 					{
@@ -169,24 +234,26 @@ module.exports = function (grunt) {
 						flatten: true,
 						cwd: 'sources/scss/',
 						src: '**/*.scss',
-						dest: 'build/public/css/scss/'
+						dest: 'staging/theme/public/css/scss/'
 					}
 				]
 			},
+
 			sass_watchedfile: {
 				expand: true,
 				flatten: true,
 				cwd: 'sources/scss/',
 				src: 'modified/file.scss',
-				dest: 'build/public/css/scss/'
+				dest: 'staging/theme/public/css/scss/'
 			},
+
 			scripts: {
 				files: [
 					{
 						expand: true,
-						cwd: 'sources/lib/',
+						cwd: 'sources/dependencies/',
 						src: '**/*.js',
-						dest: 'build/public/js/lib/'
+						dest: 'staging/theme/public/javascript/lib/'
 					}
 				]
 			}
@@ -197,16 +264,16 @@ module.exports = function (grunt) {
 
 		clean: {
 			project: [
-				'build/tmp',
-				'build/public',
-				'build/server'
+				'staging/tmp',
+				'staging/theme',
+				'staging/server'
 			],
 			release: [
-				'build/public/css/scss',
-				'build/public/css/**/*.map',
-				'build/public/css/**/*.patch',
-				'build/public/js/jsx',
-				'build/public/js/**/*.map'
+				'staging/theme/public/css/scss',
+				'staging/theme/public/css/**/*.map',
+				'staging/theme/public/css/**/*.patch',
+				'staging/theme/public/javascript/jsx',
+				'staging/theme/public/javascript/**/*.map'
 			]
 		},
 
@@ -215,7 +282,7 @@ module.exports = function (grunt) {
 				command: [
 					'bundle exec sass',
 					'--sourcemap',
-					'--update build/public/css/scss/:build/public/css/',
+					'--update staging/theme/public/css/scss/:staging/theme/public/css/',
 					'--load-path sources/scss',
 					'--style expanded',
 					'-E utf-8'
@@ -226,16 +293,31 @@ module.exports = function (grunt) {
 		},
 
 		compress: {
-			release: {
+			release_theme: {
 				options: {
 					mode: 'zip',
 					pretty: true,
-					archive: 'releases/<%= buildname %>.zip'
+					archive: 'releases/<%= buildname %>-theme.zip'
 				},
 				files: [
 					{
 						expand: true,
-						cwd: 'build/public/',
+						cwd: 'staging/theme/',
+						src: ['**/*'],
+						dest: '.'
+					}
+				]
+			},
+			release_server: {
+				options: {
+					mode: 'zip',
+					pretty: true,
+					archive: 'releases/<%= buildname %>-server.zip'
+				},
+				files: [
+					{
+						expand: true,
+						cwd: 'staging/server/',
 						src: ['**/*'],
 						dest: '.'
 					}
@@ -245,14 +327,14 @@ module.exports = function (grunt) {
 
 		concat: {
 			vendorcss: {
-				src: [ 'sources/lib/**/*.css' ],
-				dest: 'build/public/css/vendor.css'
+				src: [ 'sources/dependencies/**/*.css' ],
+				dest: 'staging/theme/public/css/vendor.css'
 			}
 		},
 
 		replace: {
 			serverfix: {
-				src: 'build/server/server.conf.json',
+				src: 'staging/server/server.conf.json',
 				overwrite: true, // overwrite matched source files
 				replacements: [
 					{
@@ -263,7 +345,7 @@ module.exports = function (grunt) {
 				]
 			},
 			removedevdeps: {
-				src: 'build/server/<%= pkg.version %>/package.json',
+				src: 'staging/server/<%= pkg.version %>/package.json',
 				overwrite: true, // overwrite matched source files
 				replacements: [
 					{
@@ -274,7 +356,7 @@ module.exports = function (grunt) {
 				]
 			},
 			cssmapsfix: {
-				src: ['build/public/css/**/*.map'],
+				src: ['staging/theme/public/css/**/*.map'],
 				overwrite: true, // overwrite matched source files
 				replacements: [
 					{
@@ -284,7 +366,7 @@ module.exports = function (grunt) {
 				]
 			},
 			jsmapsfix: {
-				src: ['build/public/js/**/*.map'],
+				src: ['staging/theme/public/javascript/**/*.map'],
 				overwrite: true, // overwrite matched source files
 				replacements: [
 					{
@@ -298,6 +380,22 @@ module.exports = function (grunt) {
 		// running `grunt watch` will have grunt run all of the following
 		// definitions simultaniously in the same console window :)
 		watch: {
+			theme: {
+				options: {
+					spawn: false,
+					livereload: 8000
+				},
+				files: [ 'sources/theme/**/*.html' ],
+				tasks: [ 'copy:watchedthemefile' ],
+			},
+			server_conf: {
+				options: {
+					spawn: false,
+					livereload: 8000
+				},
+				files: [ 'sources/server.conf.json' ],
+				tasks: [ 'copy:serverconf' ],
+			},
 			misc: {
 				options: {
 					spawn: false,
@@ -330,12 +428,25 @@ module.exports = function (grunt) {
 				options: {
 					spawn: false,
 				},
-				files: [ 'sources/jsx/**/*.js' ],
+				files: [ 'sources/javascript/**/*.js' ],
 				tasks: [
 					'react:watchedfile',
 					'jshint:watchedfile',
 					'uglify:project',
 					'replace:jsmapsfix'
+				]
+			},
+			vendorjs: {
+				options: {
+					spawn: false,
+				},
+				files: [ 'sources/lib/**/*.js' ],
+				tasks: [
+					'react:project',
+					'copy:scripts',
+					'jshint:project',
+					'uglify:project',
+					'replace:jsmapsfix',
 				]
 			},
 			server: {
@@ -366,13 +477,17 @@ module.exports = function (grunt) {
 			grunt.config('copy.sass_watchedfile.src', relative_filepath);
 		}
 		else if (target == 'scripts') {
-			var relative_filepath = filepath.replace('sources/jsx/', '');
+			var relative_filepath = filepath.replace('sources/javascript/', '');
 			grunt.config('react.watchedfile.src', relative_filepath);
-			grunt.config('jshint.watchedfile', 'build/public/js/jsx/' + relative_filepath);
+			grunt.config('jshint.watchedfile', 'staging/theme/public/javascript/jsx/' + relative_filepath);
 		}
 		else if (target == 'images') {
 			var relative_filepath = filepath.replace('sources/images/', '');
 			grunt.config('imagemin.watchedfile.src', relative_filepath);
+		}
+		else if (target == 'theme') {
+			var relative_filepath = filepath.replace('sources/theme/', '');
+			grunt.config('copy.watchedthemefile.src', relative_filepath);
 		}
 	});
 
@@ -380,6 +495,8 @@ module.exports = function (grunt) {
 
 	// server
 	grunt.loadNpmTasks('grunt-express-server');
+	grunt.loadNpmTasks('grunt-shell-spawn'); // used for mongodb instance
+	grunt.loadNpmTasks('grunt-wait');
 
 	// utilities
 	grunt.loadNpmTasks('grunt-contrib-clean');
@@ -389,6 +506,7 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-text-replace');
 	grunt.loadNpmTasks('grunt-exec');
+	grunt.loadNpmTasks('grunt-rename');
 
 	// scripts
 	grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -418,6 +536,9 @@ module.exports = function (grunt) {
 			'concat:vendorcss',
 			'replace:cssmapsfix',
 			'imagemin:project',
+			// themes
+			'copy:theme',
+			'copy:publicfiles',
 			// server tasks
 			'copy:server',
 			'copy:serverconf'
@@ -426,14 +547,23 @@ module.exports = function (grunt) {
 
 	// release task
 	grunt.registerTask(
-		'release',
+		'stage',
 		[
 			'default',
 			'clean:release',
 			'replace:serverfix',
 			'copy:packageinfo',
 			'replace:removedevdeps',
-			'compress:release'
+			'rename:server_conf'
+		]
+	);
+
+	grunt.registerTask(
+		'release',
+		[
+			'stage',
+			'compress:release_server',
+			'compress:release_theme'
 		]
 	);
 
@@ -442,6 +572,8 @@ module.exports = function (grunt) {
 		'server',
 		[
 			'default',
+			'shell:mongodb',
+			'wait:mongodb',
 			'express:project',
 			'watch'
 		]
