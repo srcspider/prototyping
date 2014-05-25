@@ -94,10 +94,12 @@ module.exports = function (grunt) {
 				banner: '/*! <%= buildbanner %> */\n',
 				sourceMap: true,
 				mangle: false,
-				beautify: true
+				beautify: true,
+				preserveComments: true
 			},
 			project: {
 				src: [
+					'staging/theme/public/javascript/support/**/*.js',
 					'staging/theme/public/javascript/lib/**/*.js',
 					'staging/theme/public/javascript/jsx/**/*.js',
 				],
@@ -249,6 +251,12 @@ module.exports = function (grunt) {
 
 			scripts: {
 				files: [
+					{
+						expand: true,
+						cwd: 'sources/alpha-dependencies/',
+						src: '**/*.js',
+						dest: 'staging/theme/public/javascript/support/'
+					},
 					{
 						expand: true,
 						cwd: 'sources/dependencies/',
@@ -440,7 +448,10 @@ module.exports = function (grunt) {
 				options: {
 					spawn: false,
 				},
-				files: [ 'sources/lib/**/*.js' ],
+				files: [
+					'sources/alpha-dependencies/**/*.js',
+					'sources/dependencies/**/*.js'
+				],
 				tasks: [
 					'react:project',
 					'copy:scripts',

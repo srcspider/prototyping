@@ -4,10 +4,11 @@
 <link rel="stylesheet" href="/css/vendor.css"/>
 <link rel="stylesheet" href="/css/master.css"/>
 
+<!--[if gt IE 8]><!-->
 <% if (server.env == 'development') { %>
 <script src="http://localhost:<%= server.livereload %>/livereload.js"></script>
 <% } // endif %>
-
+<!--<![endif]-->
 
 <div class="container">
 
