@@ -36,7 +36,7 @@ unit.def('Thread.View', function (app) {
 			this.setState(model.data());
 			model.posts().then(function (data) {
 				var posts = _.map(data, function (post) {
-					return <Post key={post.key()} model={post} refreshListing={self.refresh} />;
+					return <Post key={'post'+post.id()} model={post} refreshListing={self.refresh} />;
 				});
 				self.setState({ posts: { data: posts, ready: true } });
 			});

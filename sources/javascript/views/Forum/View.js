@@ -36,7 +36,7 @@ unit.def('Forum.View', function (app) {
 			this.setState(model.data());
 			model.threads().then(function (data) {
 				var threads = _.map(data, function (thread) {
-					return <ThreadEntry key={thread.key()} model={thread} refreshListing={self.refresh} />;
+					return <ThreadEntry key={'thread'+thread.id()} model={thread} refreshListing={self.refresh} />;
 				});
 				self.setState({ threads: { data: threads, ready: true } });
 			});
