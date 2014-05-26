@@ -25,10 +25,6 @@ unit.def('Model', function (app) {
 			return this._data._id;
 		},
 
-		key: function () {
-			return this.data._id;
-		},
-
 		data: function () {
 			return this._data;
 		},
