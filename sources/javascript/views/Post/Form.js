@@ -19,6 +19,7 @@ unit.def('Post.Form', function (app) {
 						          autoComplete={false}
 						          ref="post_body"
 						          value={this.state.body}
+						          onKeyUp={this.onBodyChange}
 						          onChange={this.onBodyChange} />
 					</div>
 					<button type="submit" className="btn btn-primary">

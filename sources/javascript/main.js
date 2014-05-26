@@ -1,7 +1,7 @@
 /** @jsx React.DOM */
 
 unit.selfdebug(1.5);
-//unit.verbose(true);
+unit.verbose(true);
 
 //*
 	// development debug:
@@ -65,11 +65,11 @@ unit.run(function (app) {
 	page('*', notfound);
 	page();
 
-}).after([
+}, 'main.js').after([
 	'Application',
 	'Forum.View',
 	'Forum.Model',
 	'Thread.View',
-	'Thread.Model',
+	'Thread.Model'
 ]);
 

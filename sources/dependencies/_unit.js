@@ -100,6 +100,9 @@
 				var entry = pending[i];
 				for (var j = 0; j < entry.deps.length; ++j) {
 					var dependency = entry.deps[j];
+					if (dependency == null) {
+						throw new Error('The module '+entry.debug_name+' has [undefined] as dependency.');
+					}
 					if (waiting_list.indexOf(dependency) == -1) {
 						waiting_list.push(dependency);
 					}
@@ -134,6 +137,10 @@
 				for (var i = 0; i < missing_modules.length; ++i) {
 					console.log(' - ' + missing_modules[i] );
 				}
+				console.log('unitjs >> Defined modules:');
+				for (var i = 0; i < defined_names.length; ++i) {
+					console.log(' - ' + defined_names[i] );
+				}
 			}
 
 			return true;
@@ -148,8 +155,16 @@
 	/**
 	 * Execute code when dependencies resolve.
 	 */
-	app.run = function (func) {
+	app.run = function (func, func_name) {
+
+		if (func_name == null) {
+			func_name = '[anonymous-func]';
+		}
+
 		var resolve = function () {
+			if (verbose) {
+				console.log('unitjs -> ' + func_name);
+			}
 			func(namespace);
 		};
 
@@ -161,10 +176,11 @@
 					required = [required];
 				}
 				else if ( ! required instanceof Array) {
-					throw "Error: Invalid require definition. Expected string or array, got ["+type+"].";
+					throw new Error("Error: Invalid require definition. Expected string or array, got ["+type+"].");
 				}
 				// save and attempt to resolve
 				pending.push({
+					debug_name: func_name,
 					deps: required,
 					callback: resolve
 				});
@@ -178,8 +194,12 @@
 	 */
 	app.def = function (name, func) {
 
+		if (name == null) {
+			throw new Error('Undefined module name.');
+		}
+
 		if (defined_names.indexOf(name) != -1) {
-			throw "Error: Duplicate module definition for module ["+name+"].";
+			throw new Error("Error: Duplicate module definition for module ["+name+"].");
 		}
 		else { // name is unique
 			// store name for debug purposes
@@ -218,10 +238,11 @@
 					required = [required];
 				}
 				else if ( ! required instanceof Array) {
-					throw "Error: Invalid require definition in module ["+name+"]. Expected string or array, got ["+type+"].";
+					throw new Error("Error: Invalid require definition in module ["+name+"]. Expected string or array, got ["+type+"].");
 				}
 				// save and attempt to resolve
 				pending.push({
+					debug_name: name,
 					deps: required,
 					callback: define
 				});

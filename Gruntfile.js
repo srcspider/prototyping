@@ -50,7 +50,7 @@ module.exports = function (grunt) {
 		// compile jsx to javascript
 		react: {
 			options: {
-				harmony: false
+				harmony: true
 			},
 			project: {
 				files: [{
@@ -106,6 +106,7 @@ module.exports = function (grunt) {
 				dest: 'staging/theme/public/javascript/scripts.js'
 			}
 		},
+
 
 		// Styles
 		// ------

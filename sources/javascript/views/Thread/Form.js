@@ -23,7 +23,9 @@ unit.def('Thread.Form', function (app) {
 									<label htmlFor="thread_title">Thread Title</label>
 									<input type="text" className="form-control"
 									       id="thread_title" autoComplete={false}
-									       ref="title" value={this.state.title} onChange={this.onTitleChange}
+									       ref="title" value={this.state.title}
+									       onKeyUp={this.onTitleChange}
+									       onChange={this.onTitleChange}
 									       placeholder="Enter Thread Title" />
 								</div>
 								<button type="submit" className="btn btn-primary">Publish</button>
