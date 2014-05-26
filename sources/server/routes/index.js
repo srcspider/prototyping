@@ -33,6 +33,7 @@ exports.router = function (server) {
 
 	app.get('/', default_controller);
 	app.get('/thread/:id', default_controller);
+	app.get('/post/:id', default_controller);
 	app.get('/about', default_controller);
 
 	// Private Routes
