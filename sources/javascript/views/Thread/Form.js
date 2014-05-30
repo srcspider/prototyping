@@ -24,7 +24,6 @@ unit.def('Thread.Form', function (app) {
 									<input type="text" className="form-control"
 									       id="thread_title" autoComplete={false}
 									       ref="title" value={this.state.title}
-									       onKeyUp={this.onTitleChange}
 									       onChange={this.onTitleChange}
 									       placeholder="Enter Thread Title" />
 								</div>
